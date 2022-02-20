@@ -20,13 +20,13 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 from matplotlib import pyplot as plt
 from collections import deque
 from threading import Lock, Thread
 
-import myo
+import myo 
 import numpy as np
-
 
 class EmgCollector(myo.DeviceListener):
   """
@@ -76,7 +76,7 @@ class Plot(object):
   def main(self):
     while True:
       self.update_plot()
-      plt.pause(1.0 / 100)
+      plt.pause(1.0 / 30)
 
 
 def main():
@@ -87,5 +87,4 @@ def main():
     Plot(listener).main()
 
 
-if __name__ == '__main__':
-  main()
+main()

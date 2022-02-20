@@ -98,7 +98,7 @@ class Listener(myo.DeviceListener):
 
 
 if __name__ == '__main__':
-  myo.init()
+  myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
   hub = myo.Hub()
   listener = Listener()
   while hub.run(listener.on_event, 500):
