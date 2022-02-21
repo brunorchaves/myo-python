@@ -10,7 +10,7 @@ import myo
 import numpy as np
 from collections import deque
 
-columns= 100
+columns= 513
 rows = 8
 dimensions = (rows,columns)
 signal_header = np.zeros(columns,dtype='object')
@@ -23,8 +23,6 @@ for i in range(0, columns):
     else:
         signal_header[i]= "sample_ "+ str(i);
 
-
-signal_array=np.zeros(dimensions)
 
 data = []
 #receives the signal from the emg, saves 100 samples from each plate on the array
@@ -66,7 +64,7 @@ class Plot(object):
 
   def update_plot(self):
     emg_data = self.listener.get_emg_data()
-    emg_data = np.array([x[1] for x in emg_data])
+    emg_data = np.array([x[1] for x in emg_data]).T
     return emg_data
     # for g, data in zip(self.graphs, emg_data):
     #   if len(data) < self.n:
@@ -90,9 +88,9 @@ with hub.run_in_background(listener.on_event):
  
 #creates the dataframe
 
+signal_array=np.zeros(dimensions)
+signal_array[:,:-1] = data
 df = pd.DataFrame(data=signal_array,  columns=signal_header)
-print(data)
-print(len(data[0]))
-print(df.head())
-plt.plot(data)
-# df.to_csv('out.csv')
+
+print(df)
+df.to_csv('emg_Samples.csv')
