@@ -71,13 +71,9 @@ class Listener(myo.DeviceListener):
 
   def on_pose(self, event):
     self.pose = event.pose
-    if self.pose == myo.Pose.double_tap:
-      event.device.stream_emg(True)
-      self.emg_enabled = True
-    elif self.pose == myo.Pose.fingers_spread:
-      event.device.stream_emg(False)
-      self.emg_enabled = False
-      self.emg = None
+    #if self.pose == myo.Pose.double_tap:
+    event.device.stream_emg(True)
+    self.emg_enabled = True
     self.output()
 
   def on_orientation(self, event):
