@@ -80,6 +80,8 @@ class Plot(object):
     plt.pause(1.0 / 100)
     return data_local
   
+print("collecting samples, please make the gesture")
+
 myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
 hub = myo.Hub()
 listener = EmgCollector(512)
@@ -97,13 +99,9 @@ df = pd.DataFrame(data=signal_array,  columns=signal_header)
 print(df)
 
 df.to_csv('emg_Samples.csv')
-# x = np.arange(0, 511)
-# y =data[0,:]
-# plt.plot(x,y, color ="red") # plotting by columns
-# # plt.show()
-# print(y.shape)
-fig, axs = plt.subplots(8)
 
+fig, axs = plt.subplots(8)
+#Plot data
 for i in range(0,512):
   axs[0].plot(data[0][:512],'tab:blue')
   axs[1].plot(data[1][:512],'tab:red')
