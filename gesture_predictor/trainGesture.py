@@ -8,7 +8,12 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 
-emgSamples =  pd.read_csv("emg_Samples.csv",index_col=0)
+# Todo: fazer menu para repetir treinamento e para escolher dataset
+treinamento = 1
+# while(treinamento != 0):
+name_df = input("diga o nome do csv:")
+
+emgSamples =  pd.read_csv(name_df,index_col=0)
 X = emgSamples.copy()
 y = X.pop('gesture')
 print(X.head())
@@ -54,7 +59,17 @@ model.compile(
     metrics=["accuracy"]
 )
 
-model.fit(X_train, y_train, epochs= 100)
+model.fit(X_train, y_train, epochs= 30)
 
 model_acc = model.evaluate(X_valid, y_valid, verbose=0)[1]
 print("Test Accuracy: {:.3f}%".format(model_acc * 100))
+# treinamento = input("continuar treinando?")
+
+
+
+# model.save('gesturePredictor_RNN.model')
+class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer']
+
+prediction = model.predict(X_valid)
+print("Verdadeiro: " + class_names[int(y_valid.array[0])])
+print("Previsão: " + class_names[np.argmax(prediction[0])])

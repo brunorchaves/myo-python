@@ -151,12 +151,13 @@ while(takingSamples == 1 ):
     takingSamples  = int(input("Continue taking samples?"))
 
 
+name_csv = input('Give a name to de data frame: ')
 #creates the dataframe
 df = pd.DataFrame(data=gestureArray,  columns=signal_header)
 # print(df)
 #correct the datafram for the recurrence plot
-df.to_csv('emg_Samples.csv')
-df = pd.read_csv("emg_Samples.csv",index_col=0)
+df.to_csv(name_csv)
+df = pd.read_csv(name_csv,index_col=0)
 # df.drop(labels =["gesture"],axis=1,inplace=True)
 # dfTransposed = df.T
 print(df)
