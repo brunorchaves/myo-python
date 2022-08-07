@@ -101,39 +101,35 @@ myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
 hub = myo.Hub()
 listener = EmgCollector(samples)
 with hub.run_in_background(listener.on_event):
-    for i in range(1,samples):
-        data = Plot(listener).display()
-        
-signal_array=np.zeros(dimensions)
-signal_array[:,:] = data
-scaler = StandardScaler()
-signal_array_scaled = scaler.fit_transform(signal_array)
+  while 1:
+        for i in range(1,samples):
+          data = Plot(listener).display()
+          
+        print("Data shape: " + str(data.shape))
+        signal_array=np.zeros(dimensions)
+        signal_array[:,:] = data
+        scaler = StandardScaler()
+        signal_array_scaled = scaler.fit_transform(signal_array)
 
-channel_0 =  signal_array_scaled[0,:]
-channel_1 =  signal_array_scaled[1,:]
-channel_2 =  signal_array_scaled[2,:]
-channel_3 =  signal_array_scaled[3,:]
-channel_4 =  signal_array_scaled[4,:]
-channel_5 =  signal_array_scaled[5,:]
-channel_6 =  signal_array_scaled[6,:]
-channel_7 =  signal_array_scaled[7,:]
+        channel_0 =  signal_array_scaled[0,:]
+        channel_1 =  signal_array_scaled[1,:]
+        channel_2 =  signal_array_scaled[2,:]
+        channel_3 =  signal_array_scaled[3,:]
+        channel_4 =  signal_array_scaled[4,:]
+        channel_5 =  signal_array_scaled[5,:]
+        channel_6 =  signal_array_scaled[6,:]
+        channel_7 =  signal_array_scaled[7,:]
 
+        arrayLine = np.concatenate((channel_0,channel_1, channel_2,channel_3,channel_4,channel_5,channel_6,channel_7), axis=None);
+        Single_gesture = arrayLine.reshape(1,800)   # Shape conversion of the input data to the model input shape requisit
 
+        # print(Single_gesture)
+        print("Single_gesture shape : " + str(Single_gesture.shape))
+        print("Single_gesture type : " + str(type(Single_gesture)))
 
-arrayLine = np.concatenate((channel_0,channel_1, channel_2,channel_3,channel_4,channel_5,channel_6,channel_7), axis=None);
-Single_gesture = arrayLine.reshape(1,800)   # Shape conversion of the input data to the model input shape requisit
-
-print(Single_gesture)
-print("Single_gesture shape : " + str(Single_gesture.shape))
-print("Single_gesture type : " + str(type(Single_gesture)))
-
-
-
-
-
-prediction = model.predict(Single_gesture)
-class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer']
-print("Previsão: " + class_names[np.argmax(prediction[0])] )
+        prediction = model.predict(Single_gesture)
+        class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer']
+        print("Previsão: " + class_names[np.argmax(prediction[0])] )
 
 
 

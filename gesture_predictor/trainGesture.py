@@ -31,10 +31,9 @@ print(y)
 input_shape = (X.shape[1],)
 print(input_shape)
 
+type(X_train)
+print(X_train.shape)
 
-print(X_train.type())
-
-input("arroz")
 
 
 # RNN ***********************************************
@@ -65,19 +64,17 @@ model.compile(
     metrics=["accuracy"]
 )
 
-model.fit(X_train, y_train, epochs= 40)
+model.fit(X_train, y_train, epochs= 200)
 
 model_acc = model.evaluate(X_valid, y_valid, verbose=0)[1]
 print("Test Accuracy: {:.3f}%".format(model_acc * 100))
 # treinamento = input("continuar treinando?")
 
-
-
-model.save('gesturePredictor_RNN.model')
+model.save('gesturePredictor_RNN_2.model')
 class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer']
 prediction = model.predict(X_valid)
+
 for i in range(0,10):
-    
     y_v_array = np.array(y_valid);
     print("Previsão: " + class_names[np.argmax(prediction[i])] + "  Gesto efetuado: " + class_names[int(y_v_array[i])])
 
