@@ -17,11 +17,11 @@ name_df = input("diga o nome do csv:")
 emgSamples =  pd.read_csv(name_df,index_col=0)
 X = emgSamples.copy()
 y = X.pop('gesture')
-X_scaled = scaler.fit_transform(X)
-print(X_scaled)
+# X_scaled = scaler.fit_transform(X)
+# print(X_scaled)
 
 # print(X)
-X_train, X_valid, y_train, y_valid = train_test_split(X_scaled, y, train_size=0.75)
+X_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.75)
 
 print(X_train.shape, X_valid.shape)
 print(y)
@@ -41,7 +41,7 @@ inputs = tf.keras.Input(shape=(X_train.shape[1],))
 expand_dims = tf.expand_dims(inputs, axis=2)
 gru = tf.keras.layers.GRU(256, return_sequences=True)(expand_dims)
 flatten = tf.keras.layers.Flatten()(gru)
-outputs = tf.keras.layers.Dense(5, activation='softmax')(flatten)
+outputs = tf.keras.layers.Dense(6, activation='softmax')(flatten)
 model = tf.keras.Model(inputs=inputs, outputs=outputs)
 print(model.summary())
 
@@ -64,14 +64,14 @@ model.compile(
     metrics=["accuracy"]
 )
 
-model.fit(X_train, y_train, epochs= 200)
+model.fit(X_train, y_train, epochs= 40)
 
 model_acc = model.evaluate(X_valid, y_valid, verbose=0)[1]
 print("Test Accuracy: {:.3f}%".format(model_acc * 100))
 # treinamento = input("continuar treinando?")
 
-model.save('gesturePredictor_RNN_2.model')
-class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer']
+model.save('gesturePredictor_RNN.model')
+class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer','Released']
 prediction = model.predict(X_valid)
 
 for i in range(0,10):

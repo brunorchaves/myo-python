@@ -4,8 +4,10 @@ Work in progress
 
 Using the api myo-python (add link later) to train a recurrent neural network to predict hand gestures
 
-Steps to accomplish my goal:
-- [ ] Study courses on kaggle (intermediate machine learning and time series)
-- [ ] Read the book Hands on ML[...] by Aurélien Géron
-- [ ] Test examples of RNNs, CNNs and LSTMs
-- [ ] Findout what are timesteps and how to use them as NNs inputs
+
+How to merge .csv into only one (windows):
+1. Browse to the folder with the CSV files.
+2. Hold down Shift, then right-click the folder and choose Copy as path.
+3. Open the Windows Command prompt.
+4. Type cd, press Space, right-click and select Paste, then press Enter.
+5. Type copy *.csv combined-csv-files.csv and Press Enter.

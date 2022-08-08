@@ -34,7 +34,7 @@ from keras.utils import np_utils
 from numpy.fft import fft, fftfreq, ifft
 
 #Initial defitions
-samples =1000
+samples =100
 columns= samples + 1
 rows = 8
 totalSamples = samples*8
@@ -114,11 +114,12 @@ labelArray =np.zeros(1)
 takingSamples = 1
 dimensions_f = (0,arraySize)
 gestureArray=np.empty(dimensions_f)
+quantSamples = 0 
+labelArray[0] = input("Enter type of gesture:")
 
 while(takingSamples == 1 ):
-    labelArray[0] = input("Enter type of gesture:")
+    quantSamples += 1
     print("collecting samples, please make the gesture")
-
     myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
     hub = myo.Hub()
     listener = EmgCollector(samples)
@@ -140,7 +141,8 @@ while(takingSamples == 1 ):
     channel_7 =  signal_array[7,:-1]
     arrayLine = np.concatenate((channel_0,channel_1, channel_2,channel_3,channel_4,channel_5,channel_6,channel_7,labelArray), axis=None);
     gestureArray = np.vstack([arrayLine,gestureArray])
-    takingSamples  = int(input("Continue taking samples?"))
+    takingSamples  = int(input("samples caught : " + str(quantSamples) + " Continue taking samples?"))
+
 
 
 # Fast fourier transform
@@ -151,35 +153,35 @@ fft_theo = 2.0*np.abs(fft_vals/samples)
 
 
 
-# name_csv = input('Give a name to de data frame: ')
-# #creates the dataframe
-# df = pd.DataFrame(data=gestureArray,  columns=signal_header)
-# # print(df)
-# #correct the datafram for the recurrence plot
-# df.to_csv(name_csv)
-# df = pd.read_csv(name_csv,index_col=0)
-# # df.drop(labels =["gesture"],axis=1,inplace=True)
-# # dfTransposed = df.T
+name_csv = input('Give a name to de data frame: ')
+#creates the dataframe
+df = pd.DataFrame(data=gestureArray,  columns=signal_header)
 # print(df)
+#correct the datafram for the recurrence plot
+df.to_csv(name_csv)
+df = pd.read_csv(name_csv,index_col=0)
+# df.drop(labels =["gesture"],axis=1,inplace=True)
+# dfTransposed = df.T
+print(df)
 
 
-#Plot the data
-fig, axs = plt.subplots(8)
-#Plot data
-for i in range(0,samples):
-  axs[0].plot(data[0][:samples],'tab:blue')
-  axs[1].plot(data[1][:samples],'tab:red')
-  axs[2].plot(data[2][:samples],'tab:green')
-  axs[3].plot(data[3][:samples],'tab:olive')
-  axs[4].plot(data[4][:samples],'tab:purple')
-  axs[5].plot(data[5][:samples],'tab:brown')
-  axs[6].plot(data[6][:samples],'tab:cyan')
-  axs[7].plot(data[7][:samples],'tab:pink')
+# #Plot the data
+# fig, axs = plt.subplots(8)
+# #Plot data
+# for i in range(0,samples):
+#   axs[0].plot(data[0][:samples],'tab:blue')
+#   axs[1].plot(data[1][:samples],'tab:red')
+#   axs[2].plot(data[2][:samples],'tab:green')
+#   axs[3].plot(data[3][:samples],'tab:olive')
+#   axs[4].plot(data[4][:samples],'tab:purple')
+#   axs[5].plot(data[5][:samples],'tab:brown')
+#   axs[6].plot(data[6][:samples],'tab:cyan')
+#   axs[7].plot(data[7][:samples],'tab:pink')
 
-plt.figure(2)
-plt.plot(freqs[mask], fft_theo[mask], label="raw fft values")
-plt.title("channel 0 fft")
-plt.show()
+# # plt.figure(2)
+# # plt.plot(freqs[mask], fft_theo[mask], label="raw fft values")
+# # plt.title("channel 0 fft")
+# plt.show()
 
 # #Plot recurrence plot
 # fig2 = plt.figure(figsize=(5,4))

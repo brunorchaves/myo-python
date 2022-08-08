@@ -95,59 +95,65 @@ dimensions_f = (0,arraySize)
 gestureArray=np.empty(dimensions_f)
 
 
+while 1:
+  print("collecting samples, please make the gesture")
+  myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
+  hub = myo.Hub()
+  listener = EmgCollector(samples)
+  with hub.run_in_background(listener.on_event):
+          for i in range(1,samples):
+            data = Plot(listener).display()
+            
+          print("Data shape: " + str(data.shape))
+          signal_array=np.zeros(dimensions)
+          signal_array[:,:] = data
 
-print("collecting samples, please make the gesture")
-myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
-hub = myo.Hub()
-listener = EmgCollector(samples)
-with hub.run_in_background(listener.on_event):
-  while 1:
-        for i in range(1,samples):
-          data = Plot(listener).display()
-          
-        print("Data shape: " + str(data.shape))
-        signal_array=np.zeros(dimensions)
-        signal_array[:,:] = data
-        scaler = StandardScaler()
-        signal_array_scaled = scaler.fit_transform(signal_array)
+          channel_0 =  signal_array[0,:]
+          channel_1 =  signal_array[1,:]
+          channel_2 =  signal_array[2,:]
+          channel_3 =  signal_array[3,:]
+          channel_4 =  signal_array[4,:]
+          channel_5 =  signal_array[5,:]
+          channel_6 =  signal_array[6,:]
+          channel_7 =  signal_array[7,:]
 
-        channel_0 =  signal_array_scaled[0,:]
-        channel_1 =  signal_array_scaled[1,:]
-        channel_2 =  signal_array_scaled[2,:]
-        channel_3 =  signal_array_scaled[3,:]
-        channel_4 =  signal_array_scaled[4,:]
-        channel_5 =  signal_array_scaled[5,:]
-        channel_6 =  signal_array_scaled[6,:]
-        channel_7 =  signal_array_scaled[7,:]
+          arrayLine = np.concatenate((channel_0,channel_1, channel_2,channel_3,channel_4,channel_5,channel_6,channel_7), axis=None);
+          Single_gesture = arrayLine.reshape(1,800)   # Shape conversion of the input data to the model input shape requisit
+          # scaler = StandardScaler()
+          # single_gesture_scaled = scaler.fit_transform(Single_gesture)
+          # print(Single_gesture)
+          # print("Single_gesture shape : " + str(Single_gesture.shape))
+          # print("Single_gesture type : " + str(type(Single_gesture)))
 
-        arrayLine = np.concatenate((channel_0,channel_1, channel_2,channel_3,channel_4,channel_5,channel_6,channel_7), axis=None);
-        Single_gesture = arrayLine.reshape(1,800)   # Shape conversion of the input data to the model input shape requisit
-
-        # print(Single_gesture)
-        print("Single_gesture shape : " + str(Single_gesture.shape))
-        print("Single_gesture type : " + str(type(Single_gesture)))
-
-        prediction = model.predict(Single_gesture)
-        class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer']
-        print("Previsão: " + class_names[np.argmax(prediction[0])] )
+          prediction = model.predict(Single_gesture)
+          class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer','Released']
+          print("Previsão: " + class_names[np.argmax(prediction[0])] )
 
 
+# scaler = StandardScaler()
 
 # # Using dataset
 # name_df = input("diga o nome do csv:")
 # emgSamples =  pd.read_csv(name_df,index_col=0)
 # X = emgSamples.copy()
 # y = X.pop('gesture')
-# X_scaled = scaler.fit_transform(X)
+# # X_scaled = scaler.fit_transform(X)
+# # print(X_scaled)
 
-# X_train, X_valid, y_train, y_valid = train_test_split(X_scaled, y, train_size=0.75)
-# class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer']
-# print(type(X_valid))                           # numpy.ndarray
-# X_single_gesture = X_valid[0].reshape(1,800)   # Shape conversion of the input data to the model input shape requisit
-# prediction = model.predict(X_single_gesture)
+# X_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.75)
+# class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer','Released']
+# prediction = model.predict(X_valid)
+# X_valid_np = X_valid.to_numpy()
+# print(type(X_valid_np))
+# print((X_valid.shape))
 
-# y_v_array = np.array(y_valid);
-# print("Previsão: " + class_names[np.argmax(prediction[0])] + "  Gesto efetuado: " + class_names[int(y_v_array[0])])
+# for i in range(0,45):
+#   single_gesture = X_valid_np[i].reshape(1,800)
+#   print(single_gesture.shape)
+#   prediction = model.predict(single_gesture)
+#   y_v_array = np.array(y_valid);
+#   print("Previsão: " + class_names[np.argmax(prediction[0])] + "  Gesto efetuado: " + class_names[int(y_v_array[i])])
+
 
 
 
