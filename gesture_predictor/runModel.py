@@ -2,6 +2,7 @@ import tensorflow as tf
 import pandas as pd
 # Setup plotting
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 from tensorflow import keras
 from tensorflow.keras import layers
 from sklearn.model_selection import train_test_split
@@ -94,41 +95,65 @@ arraySize = (samples*rows)+1
 dimensions_f = (0,arraySize)
 gestureArray=np.empty(dimensions_f)
 
+plt.ion()
 
-while 1:
-  print("collecting samples, please make the gesture")
-  myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
-  hub = myo.Hub()
-  listener = EmgCollector(samples)
-  with hub.run_in_background(listener.on_event):
-          for i in range(1,samples):
-            data = Plot(listener).display()
-            
-          print("Data shape: " + str(data.shape))
-          signal_array=np.zeros(dimensions)
-          signal_array[:,:] = data
+print("collecting samples, please make the gesture")
+myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
+hub = myo.Hub()
+listener = EmgCollector(samples)
+with hub.run_in_background(listener.on_event):
+  while 1:
+        for i in range(1,samples):
+          data = Plot(listener).display()
+          
+        # print("Data shape: " + str(data.shape))
+        signal_array=np.zeros(dimensions)
+        signal_array[:,:] = data
 
-          channel_0 =  signal_array[0,:]
-          channel_1 =  signal_array[1,:]
-          channel_2 =  signal_array[2,:]
-          channel_3 =  signal_array[3,:]
-          channel_4 =  signal_array[4,:]
-          channel_5 =  signal_array[5,:]
-          channel_6 =  signal_array[6,:]
-          channel_7 =  signal_array[7,:]
+        channel_0 =  signal_array[0,:]
+        channel_1 =  signal_array[1,:]
+        channel_2 =  signal_array[2,:]
+        channel_3 =  signal_array[3,:]
+        channel_4 =  signal_array[4,:]
+        channel_5 =  signal_array[5,:]
+        channel_6 =  signal_array[6,:]
+        channel_7 =  signal_array[7,:]
 
-          arrayLine = np.concatenate((channel_0,channel_1, channel_2,channel_3,channel_4,channel_5,channel_6,channel_7), axis=None);
-          Single_gesture = arrayLine.reshape(1,800)   # Shape conversion of the input data to the model input shape requisit
-          # scaler = StandardScaler()
-          # single_gesture_scaled = scaler.fit_transform(Single_gesture)
-          # print(Single_gesture)
-          # print("Single_gesture shape : " + str(Single_gesture.shape))
-          # print("Single_gesture type : " + str(type(Single_gesture)))
+        arrayLine = np.concatenate((channel_0,channel_1, channel_2,channel_3,channel_4,channel_5,channel_6,channel_7), axis=None);
+        mean = arrayLine.mean(axis=0)
+        std = arrayLine.std(axis=0)
+        arrayLine -=mean
+        arrayLine /=std
+        Single_gesture = arrayLine.reshape(1,800)   # Shape conversion of the input data to the model input shape requisit
 
-          prediction = model.predict(Single_gesture)
-          class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer','Released']
-          print("Previsão: " + class_names[np.argmax(prediction[0])] )
 
+        # scaler = StandardScaler()
+        # single_gesture_scaled = scaler.fit_transform(Single_gesture)
+        # print(Single_gesture)
+        # print("Single_gesture shape : " + str(Single_gesture.shape))
+        # print("Single_gesture type : " + str(type(Single_gesture)))
+        prediction = model.predict(Single_gesture)
+        class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer','Released']
+        print("Previsão: " + class_names[np.argmax(prediction[0])] )
+        # if((class_names[np.argmax(prediction[0])]) == "Spock"):
+        #   img = mpimg.imread('spockHand.jpg')
+        #   imgplot = plt.imshow(img)
+        # elif((class_names[np.argmax(prediction[0])]) == "Rock"):
+        #   img = mpimg.imread('rockHand.jpg')
+        #   imgplot = plt.imshow(img)
+        # elif((class_names[np.argmax(prediction[0])]) == "Ok!"):
+        #   img = mpimg.imread('okHand.jpg')
+        #   imgplot = plt.imshow(img)
+        # elif((class_names[np.argmax(prediction[0])]) == "Thumbs Up"):
+        #   img = mpimg.imread('thumbsUpHand.jpg')
+        #   imgplot = plt.imshow(img)
+        # elif((class_names[np.argmax(prediction[0])]) == "Pointer"):
+        #   img = mpimg.imread('pointerHand.jpg')
+        #   imgplot = plt.imshow(img)
+        # elif((class_names[np.argmax(prediction[0])]) == "Released"):
+        #   img = mpimg.imread('relaxedHand.jpg')
+        #   imgplot = plt.imshow(img)
+          
 
 # scaler = StandardScaler()
 
