@@ -2,7 +2,7 @@ import tensorflow as tf
 import pandas as pd
 # Setup plotting
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+import cv2
 from tensorflow import keras
 from tensorflow.keras import layers
 from sklearn.model_selection import train_test_split
@@ -95,8 +95,14 @@ arraySize = (samples*rows)+1
 dimensions_f = (0,arraySize)
 gestureArray=np.empty(dimensions_f)
 
+#Image display variables
 plt.ion()
+currentImg = " "
+lastImg = " "
+img = cv2.imread("relaxedHand.jpg", cv2.IMREAD_COLOR)
+cv2.imshow("relaxedHand", img)
 
+#Real time classification
 print("collecting samples, please make the gesture")
 myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
 hub = myo.Hub()
@@ -132,28 +138,56 @@ with hub.run_in_background(listener.on_event):
         # print(Single_gesture)
         # print("Single_gesture shape : " + str(Single_gesture.shape))
         # print("Single_gesture type : " + str(type(Single_gesture)))
+        a = 0
+
         prediction = model.predict(Single_gesture)
         class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer','Released']
         print("Previsão: " + class_names[np.argmax(prediction[0])] )
-        # if((class_names[np.argmax(prediction[0])]) == "Spock"):
-        #   img = mpimg.imread('spockHand.jpg')
-        #   imgplot = plt.imshow(img)
-        # elif((class_names[np.argmax(prediction[0])]) == "Rock"):
-        #   img = mpimg.imread('rockHand.jpg')
-        #   imgplot = plt.imshow(img)
-        # elif((class_names[np.argmax(prediction[0])]) == "Ok!"):
-        #   img = mpimg.imread('okHand.jpg')
-        #   imgplot = plt.imshow(img)
-        # elif((class_names[np.argmax(prediction[0])]) == "Thumbs Up"):
-        #   img = mpimg.imread('thumbsUpHand.jpg')
-        #   imgplot = plt.imshow(img)
-        # elif((class_names[np.argmax(prediction[0])]) == "Pointer"):
-        #   img = mpimg.imread('pointerHand.jpg')
-        #   imgplot = plt.imshow(img)
-        # elif((class_names[np.argmax(prediction[0])]) == "Released"):
-        #   img = mpimg.imread('relaxedHand.jpg')
-        #   imgplot = plt.imshow(img)
-          
+        if((class_names[np.argmax(prediction[0])]) == "Spock"): 
+          currentImg = "Spock"
+          if(currentImg != lastImg):   
+            cv2.destroyAllWindows()
+            img = cv2.imread("spockHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.resize(img, dsize=(300, 300))
+            cv2.imshow("Spock", img)
+        elif((class_names[np.argmax(prediction[0])]) == "Rock"):
+          currentImg = "Rock"
+          if(currentImg != lastImg): 
+            cv2.destroyAllWindows()
+            img = cv2.imread("rockHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.resize(img, dsize=(300, 300))            
+            cv2.imshow("Rock", img)
+        elif((class_names[np.argmax(prediction[0])]) == "Ok!"):
+          currentImg = "Ok"
+          if(currentImg != lastImg): 
+            cv2.destroyAllWindows()
+            img = cv2.imread("okHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.resize(img, dsize=(300, 300))            
+            cv2.imshow("OK", img)
+        elif((class_names[np.argmax(prediction[0])]) == "Thumbs Up"):
+          currentImg = "Thumbs Up"
+          if(currentImg != lastImg):
+            cv2.destroyAllWindows()   
+            img = cv2.imread("thumbsUpHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.resize(img, dsize=(300, 300))            
+            cv2.imshow("ThumbsUp", img)
+        elif((class_names[np.argmax(prediction[0])]) == "Pointer"):
+          currentImg = "Pointer"
+          if(currentImg != lastImg): 
+            cv2.destroyAllWindows() 
+            img = cv2.imread("pointerHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.resize(img, dsize=(300, 300))            
+            cv2.imshow("Pointer", img)
+        elif((class_names[np.argmax(prediction[0])]) == "Released"):
+          currentImg = "Released"
+          if(currentImg != lastImg):
+            cv2.destroyAllWindows()   
+            img = cv2.imread("relaxedHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.resize(img, dsize=(300, 300))            
+            cv2.imshow("Released", img)
+        cv2.waitKey(1)
+        lastImg = currentImg
+
 
 # scaler = StandardScaler()
 

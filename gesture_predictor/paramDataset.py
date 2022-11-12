@@ -1,5 +1,7 @@
 from __future__ import print_function
+from pickle import FALSE
 from signal import signal
+from sqlite3 import Timestamp
 import pandas as pd
 import numpy as np
 from tomlkit import boolean 
@@ -13,39 +15,45 @@ import numpy as np
 from collections import deque
 import matplotlib._color_data as mcd
 import matplotlib.patches as mpatch
-
-
 from scipy.spatial.distance import pdist, squareform #scipy spatial distance
 import sklearn as sk
 import sklearn.metrics.pairwise
 import os
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Convolution2D, MaxPooling2D, LeakyReLU
-from keras import metrics
-from keras import backend as K
+clear = lambda: os.system('cls')
 import time
-from skimage.transform import resize
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.utils import to_categorical
-from keras.utils import np_utils
+from gestureClass import gesture
 
-from numpy.fft import fft, fftfreq, ifft
+def current_milli_time():
+    return round(time.time() * 1000)
+
+#Infos :
+# - 64 samples per second
+
+
+#Todo
+# 1- Show the passage of time in milliseconds -- done!
+# 2- increase the total number of samples -- done!
+# 3- print the quantity of samples taken in real time --done!
+# 3- put a warning for changing from rest to gesture  -- done!
+# 4- automate name genaration -> gesture_spock_iter_# -- done!
+# 5- plot the dat in matlab
+# 6- make a visual interface to help the user do the gesture properly 
+# 7- make the the gesture random
 
 #Initial defitions
-samples =100
+millis = 0
+samples =1500
 columns= samples + 1
-rows = 8
-totalSamples = samples*8
-totalColumns = totalSamples+1
+rows = 9
+# totalSamples = samples
+totalColumns = samples+1
 dimensions = (rows,columns)
 dimensions2 = (rows,columns-1)
 
-
-arraySize = (samples*rows)+1
+arraySize = (samples)+1
 signal_header = np.zeros((arraySize),dtype='object')
-
+rowsHeader = np.zeros((rows),dtype='object')
+time_header = np.zeros((samples),dtype='object')
 
 #fill the signal header with its names
 for i in range(0, totalColumns):
@@ -55,13 +63,15 @@ for i in range(0, totalColumns):
         signal_header[i]= "sample_ "+ str(i);
 
 
+
+
 data = []
 #receives the signal from the emg, saves 100 samples from each plate on the array
 
 class EmgCollector(myo.DeviceListener):
-  """
-  Collects EMG data in a queue with *n* maximum number of elements.
-  """
+  # """
+  # Collects EMG data in a queue with *n* maximum number of elements.
+  # """
 
   def __init__(self, n):
     self.n = n
@@ -80,7 +90,6 @@ class EmgCollector(myo.DeviceListener):
   def on_emg(self, event):
     with self.lock:
       self.emg_data_queue.append((event.timestamp, event.emg))
-
 
 class Plot(object):
 
@@ -108,29 +117,62 @@ class Plot(object):
     data_local = self.update_plot()
     plt.pause(1.0 / 100)
     return data_local
-  
+
+# https://stackoverflow.com/questions/17907213/choosing-random-integers-except-for-a-particular-number-for-python
+spock_g = gesture()
+rock_g = gesture()
+ok_g = gesture()
+thumbs_Up_g = gesture()
+pointer_g = gesture()
+# Take the type of gesture and sum
+# take a number from 1 to 5
+# see if the gesture chosen is full 
+# if it is, drop the number and take other except the ones not fulled
 
 labelArray =np.zeros(1)
 takingSamples = 1
 dimensions_f = (0,arraySize)
 gestureArray=np.empty(dimensions_f)
 quantSamples = 0 
-labelArray[0] = input("Enter type of gesture:")
 
+class_names = ['Spock','Rock','Ok!','Thumbs Up','Pointer','Released']
+gestureIndex = int(input("Enter type of gesture:"))
+labelArray[0] = gestureIndex
+iterNumber = input("Enter number of iteration:")
+
+# time initial
+timeStamp = current_milli_time();
+sampleFreq = False
 while(takingSamples == 1 ):
     quantSamples += 1
-    print("collecting samples, please make the gesture")
+    print("Samples collection started, please rest the arm")
     myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
     hub = myo.Hub()
     listener = EmgCollector(samples)
     with hub.run_in_background(listener.on_event):
         for i in range(1,samples):
+            millis = current_milli_time() - timeStamp
+            time_header[i] = millis
+            # Samples per second counting:
+            if(millis>=1000 and sampleFreq == False):
+              sampleFreq = True;
+              print(str(i) + " samples por second")
+            # Warning to tell when do the gesture:
+            if(i < samples/2):
+              clear()
+              print(str(samples/2-i) + " samples left to start the gesture" )
+            else:
+              clear()
+              print("Please do the gesture") 
+              print(str(samples-i) + " samples left to finish the gesture" )
+
             data = Plot(listener).display()
             # print(data)
-    
+
+    # time in millis
     #concatenate signal
     signal_array=np.zeros(dimensions)
-    signal_array[:,:-1] = data
+    signal_array[1:,:-1] = data
     channel_0 =  signal_array[0,:-1]
     channel_1 =  signal_array[1,:-1]
     channel_2 =  signal_array[2,:-1]
@@ -139,52 +181,26 @@ while(takingSamples == 1 ):
     channel_5 =  signal_array[5,:-1]
     channel_6 =  signal_array[6,:-1]
     channel_7 =  signal_array[7,:-1]
-    arrayLine = np.concatenate((channel_0,channel_1, channel_2,channel_3,channel_4,channel_5,channel_6,channel_7,labelArray), axis=None);
-    gestureArray = np.vstack([arrayLine,gestureArray])# stack lines of signal
+    signal_array[0,:-1] = time_header;
+    # signal_array[1,:-1] = time_header;
+
+    # arrayLine = np.concatenate((channel_0,channel_1, channel_2,channel_3,channel_4,channel_5,channel_6,channel_7,time_header,labelArray), axis=None);
+    # gestureArray = np.vstack([arrayLine,gestureArray])# stack lines of signal
+    # gestureArray =arrayLine;
     takingSamples  = int(input("samples caught : " + str(quantSamples) + " Continue taking samples?"))
 
+print(signal_array)
+print(signal_array.shape)
 
-
-# Fast fourier transform
-freqs = fftfreq(samples)
-mask = freqs >0
-fft_vals = fft(channel_0)
-fft_theo = 2.0*np.abs(fft_vals/samples)
-
-
-
-name_csv = input('Give a name to de data frame: ')
+# name_csv = input('Give a name to the data frame: ')
+name_csv = "gesture_"+class_names[gestureIndex]+"_iter_"+ str(iterNumber)
 #creates the dataframe
-df = pd.DataFrame(data=gestureArray,  columns=signal_header)
+df = pd.DataFrame(data=signal_array,  columns=signal_header )
 # print(df)
-#correct the datafram for the recurrence plot
+#correct the datafram for the recurrence plot 
 df.to_csv(name_csv)
 df = pd.read_csv(name_csv,index_col=0)
 # df.drop(labels =["gesture"],axis=1,inplace=True)
 # dfTransposed = df.T
 print(df)
 
-
-# #Plot the data
-# fig, axs = plt.subplots(8)
-# #Plot data
-# for i in range(0,samples):
-#   axs[0].plot(data[0][:samples],'tab:blue')
-#   axs[1].plot(data[1][:samples],'tab:red')
-#   axs[2].plot(data[2][:samples],'tab:green')
-#   axs[3].plot(data[3][:samples],'tab:olive')
-#   axs[4].plot(data[4][:samples],'tab:purple')
-#   axs[5].plot(data[5][:samples],'tab:brown')
-#   axs[6].plot(data[6][:samples],'tab:cyan')
-#   axs[7].plot(data[7][:samples],'tab:pink')
-
-# # plt.figure(2)
-# # plt.plot(freqs[mask], fft_theo[mask], label="raw fft values")
-# # plt.title("channel 0 fft")
-# plt.show()
-
-# #Plot recurrence plot
-# fig2 = plt.figure(figsize=(5,4))
-# ax = fig2.add_subplot(1, 1, 1)
-# ax.imshow(recurrence_plot(dfTransposed,steps=1000))
-# plt.show()
