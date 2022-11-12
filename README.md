@@ -3,7 +3,7 @@ Work in progress
 ## Myo Predictor
 
 Using the api myo-python (add link later) to train a recurrent neural network to predict hand gestures
-
+<p align="center"><img src="results/demo.gif"  width="250">
 
 How to merge .csv into only one (windows):
 1. Browse to the folder with the CSV files.
