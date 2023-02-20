@@ -99,9 +99,9 @@ gestureArray=np.empty(dimensions_f)
 plt.ion()
 currentImg = " "
 lastImg = " "
-img = cv2.imread("relaxedHand.jpg", cv2.IMREAD_COLOR)
+imdir = 'img/'
+img = cv2.imread(imdir+'relaxedHand.jpg', cv2.IMREAD_COLOR)
 cv2.imshow("relaxedHand", img)
-
 #Real time classification
 print("collecting samples, please make the gesture")
 myo.init(bin_path=r'D:\Documentos\GitHub\myoPython\myo-sdk-win-0.9.0\bin')
@@ -147,42 +147,42 @@ with hub.run_in_background(listener.on_event):
           currentImg = "Spock"
           if(currentImg != lastImg):   
             cv2.destroyAllWindows()
-            img = cv2.imread("spockHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.imread(imdir+'spockHand.jpg', cv2.IMREAD_COLOR)
             img = cv2.resize(img, dsize=(300, 300))
             cv2.imshow("Spock", img)
         elif((class_names[np.argmax(prediction[0])]) == "Rock"):
           currentImg = "Rock"
           if(currentImg != lastImg): 
             cv2.destroyAllWindows()
-            img = cv2.imread("rockHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.imread(imdir+'rockHand.jpg', cv2.IMREAD_COLOR)
             img = cv2.resize(img, dsize=(300, 300))            
             cv2.imshow("Rock", img)
         elif((class_names[np.argmax(prediction[0])]) == "Ok!"):
           currentImg = "Ok"
           if(currentImg != lastImg): 
             cv2.destroyAllWindows()
-            img = cv2.imread("okHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.imread(imdir+'okHand.jpg', cv2.IMREAD_COLOR)
             img = cv2.resize(img, dsize=(300, 300))            
             cv2.imshow("OK", img)
         elif((class_names[np.argmax(prediction[0])]) == "Thumbs Up"):
           currentImg = "Thumbs Up"
           if(currentImg != lastImg):
             cv2.destroyAllWindows()   
-            img = cv2.imread("thumbsUpHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.imread(imdir+'thumbsUpHand.jpg', cv2.IMREAD_COLOR)
             img = cv2.resize(img, dsize=(300, 300))            
             cv2.imshow("ThumbsUp", img)
         elif((class_names[np.argmax(prediction[0])]) == "Pointer"):
           currentImg = "Pointer"
           if(currentImg != lastImg): 
             cv2.destroyAllWindows() 
-            img = cv2.imread("pointerHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.imread(imdir+'pointerHand.jpg', cv2.IMREAD_COLOR)
             img = cv2.resize(img, dsize=(300, 300))            
             cv2.imshow("Pointer", img)
         elif((class_names[np.argmax(prediction[0])]) == "Released"):
           currentImg = "Released"
           if(currentImg != lastImg):
             cv2.destroyAllWindows()   
-            img = cv2.imread("relaxedHand.jpg", cv2.IMREAD_COLOR)
+            img = cv2.imread(imdir+'relaxedHand.jpg', cv2.IMREAD_COLOR)
             img = cv2.resize(img, dsize=(300, 300))            
             cv2.imshow("Released", img)
         cv2.waitKey(1)
